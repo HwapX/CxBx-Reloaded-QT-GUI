@@ -40,8 +40,8 @@ QVariant XbeTableModel::data(const QModelIndex &index, int role) const
         switch(index.column()) {
         case 0: return this->logoCache[xbe];
         case 1: return QString(xbe->m_szAsciiTitle);
-        case 2: return (qint32)xbe->m_Certificate.dwGameRegion;
-        //case 3: return QString::asprintf("%d.%d.%d", xbe->m_LibraryVersion->wMajorVersion, xbe->m_LibraryVersion->wMinorVersion, xbe->m_LibraryVersion->wBuildVersion);
+        case 2: return (quint32)xbe->m_Certificate.dwGameRegion;
+        case 3: return QString::asprintf("%d.%d.%d", xbe->m_LibraryVersion->wMajorVersion, xbe->m_LibraryVersion->wMinorVersion, xbe->m_LibraryVersion->wBuildVersion);
         }
         break;
     case Qt::DecorationRole:
@@ -49,7 +49,7 @@ QVariant XbeTableModel::data(const QModelIndex &index, int role) const
             return this->logoCache[xbe];
         break;
     case Qt::TextAlignmentRole:
-        if (index.column() == 0)
+        if (index.column() == 3)
             return Qt::AlignCenter;
         break;
     }
@@ -77,7 +77,6 @@ void XbeTableModel::scanDirectory(QString directory)
         this->logoCache[xbe] = QPixmap::fromImage(logo);
     }
 }
-
 
 QVariant XbeTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
