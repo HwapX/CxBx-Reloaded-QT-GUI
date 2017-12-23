@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->gameTableView->setModel(new XbeTableModel(this->settings->value("game_dir").toString()));
     this->gameTableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    this->gameTableView->setColumnWidth(0, 110);
 }
 
 MainWindow::~MainWindow()
@@ -57,12 +58,9 @@ void MainWindow::on_actionEmulationStart_triggered()
     if(!selectionModel->hasSelection())
         return;
 
-    int index = selectionModel->selectedIndexes().at(0).row();
+    int row = selectionModel->selectedIndexes().at(0).row();
 
-    QString xbePath = model->getXbe(index)->m_szPath;
-    QString program = this->settings->value("cxbx_path").toString();
-
-    this->emulatorProcess.start(program, QStringList() << xbePath);
+    this->runGame(model->getXbe(row)->m_szPath);
 }
 
 //Open a dialog window to load an .xbe and run on the emulator
@@ -72,18 +70,14 @@ void MainWindow::on_actionOpen_Xbe_triggered()
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open"),"",tr("*.xbe"));
 
    //Run the .xbe as an argument for the emulator if the argument isn't empty
-    if (fileName != ""){
+    if (fileName == ""){
+        return;
+    }
 
-        QString program = "E:\\Emulators\\XBox\\Emulators\\11-30\\Cxbx.exe "; //hard coded path, should be dynamic in the future
-        QStringList arguments;
-        QString temp_path; // = "\"" + fileName + "\""; enquotations are not working for some reason?
-        temp_path = QDir::toNativeSeparators(fileName); //QDir::toNativeSeparators makes sure the path obtained by QFileDialog::getOpenFileName is valid as a native path
-        arguments << temp_path;
+    QString emuPath = this->settings->value("cxbx_path").toString();
 
-        QProcess *myProcess = new QProcess(qApp);
-        myProcess->start(program,arguments);
-
-      }
+    QProcess *myProcess = new QProcess(qApp);
+    myProcess->start(emuPath, QStringList() << QDir::toNativeSeparators(fileName)); //QDir::toNativeSeparators makes sure the path obtained by QFileDialog::getOpenFileName is valid as a native path
 }
 
 
@@ -103,4 +97,18 @@ void MainWindow::on_actionEmulationStop_triggered()
 {
     if(this->emulatorProcess.state() == QProcess::Running)
         this->emulatorProcess.terminate();
+}
+
+void MainWindow::on_gameTableView_doubleClicked(const QModelIndex &index)
+{
+    XbeTableModel *model = dynamic_cast<XbeTableModel*>(this->gameTableView->model());
+
+    this->runGame(model->getXbe(index.row())->m_szPath);
+}
+
+void MainWindow::runGame(const QString filePath)
+{
+    QString emuPath = this->settings->value("cxbx_path").toString();
+
+    this->emulatorProcess.start(emuPath, QStringList() << filePath);
 }

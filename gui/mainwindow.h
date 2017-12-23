@@ -36,11 +36,15 @@ private slots:
 
     void on_actionEmulationStop_triggered();
 
+    void on_gameTableView_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     QTableView *gameTableView;
     QSettings *settings;
     QProcess emulatorProcess;
+
+    void runGame(const QString filePath);
 };
 
 #endif // MAINWINDOW_H

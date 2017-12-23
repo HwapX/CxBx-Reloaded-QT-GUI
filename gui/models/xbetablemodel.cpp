@@ -1,5 +1,10 @@
 #include "xbetablemodel.h"
 
+void freeLogo(void *info)
+{
+    delete (uint8_t*)info;
+}
+
 XbeTableModel::XbeTableModel(QString directory)
 {
     scanDirectory(directory);
@@ -28,14 +33,25 @@ QVariant XbeTableModel::data(const QModelIndex &index, int role) const
     if(!index.isValid() || index.row() >= this->xbeList.count())
         return QVariant();
 
-    if(role == Qt::DisplayRole) {
-        Xbe *xbe = this->xbeList.at(index.row());
+    Xbe *xbe = this->xbeList.at(index.row());
 
+    switch(role) {
+    case Qt::DisplayRole:
         switch(index.column()) {
+        case 0: return this->logoCache[xbe];
         case 1: return QString(xbe->m_szAsciiTitle);
         case 2: return (qint32)xbe->m_Certificate.dwGameRegion;
         //case 3: return QString::asprintf("%d.%d.%d", xbe->m_LibraryVersion->wMajorVersion, xbe->m_LibraryVersion->wMinorVersion, xbe->m_LibraryVersion->wBuildVersion);
         }
+        break;
+    case Qt::DecorationRole:
+        if (index.column() == 0)
+            return this->logoCache[xbe];
+        break;
+    case Qt::TextAlignmentRole:
+        if (index.column() == 0)
+            return Qt::AlignCenter;
+        break;
     }
 
     return QVariant();
@@ -52,7 +68,13 @@ void XbeTableModel::scanDirectory(QString directory)
 
         xbe = new Xbe(nextFile.toStdString().data());
 
+        uint8_t *a = new uint8_t[100*17];
+        xbe->ExportLogoBitmap(a);
+
+        QImage logo(a, 100, 17, QImage::Format_Grayscale8, freeLogo, (void*)a);
+
         this->xbeList.append(xbe);
+        this->logoCache[xbe] = QPixmap::fromImage(logo);
     }
 }
 

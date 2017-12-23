@@ -2,11 +2,12 @@
 #define XBEITEMMODEL_H
 
 #include <QList>
-
 #include <QString>
 #include <QAbstractItemModel>
-
 #include <QDirIterator>
+#include <QImage>
+#include <QPixmap>
+#include <QSize>
 
 #include "Common/Xbe.h"
 
@@ -27,6 +28,7 @@ public:
 
 private:
     QList<Xbe*> xbeList;
+    QMap<Xbe*, QPixmap> logoCache;
 
     void scanDirectory(QString directory);
 };

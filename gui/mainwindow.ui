@@ -48,7 +48,7 @@
        </size>
       </property>
       <attribute name="verticalHeaderDefaultSectionSize">
-       <number>60</number>
+       <number>40</number>
       </attribute>
      </widget>
     </item>
