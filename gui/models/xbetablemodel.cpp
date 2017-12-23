@@ -5,6 +5,26 @@ void freeLogo(void *info)
     delete (uint8_t*)info;
 }
 
+QString regionToString(const uint32_t dwRegion)
+{
+    QString region;
+    if(dwRegion & (XBEIMAGE_GAME_REGION_NA | XBEIMAGE_GAME_REGION_JAPAN | XBEIMAGE_GAME_REGION_RESTOFWORLD))
+        region = "ALL";
+    else if(dwRegion & XBEIMAGE_GAME_REGION_NA)
+        region = "NA";
+    else if(dwRegion & XBEIMAGE_GAME_REGION_JAPAN)
+        region = "JP";
+    else if(dwRegion & XBEIMAGE_GAME_REGION_RESTOFWORLD)
+        region = "RW";
+    else
+        region = "??";
+
+    if(dwRegion & XBEIMAGE_GAME_REGION_MANUFACTURING)
+        region += "-M";
+
+    return QString("0x%1 (%2)").arg(QString::number(dwRegion, 16).toUpper(), 8, '0').arg(region);
+}
+
 XbeTableModel::XbeTableModel(QString directory)
 {
     scanDirectory(directory);
@@ -40,7 +60,7 @@ QVariant XbeTableModel::data(const QModelIndex &index, int role) const
         switch(index.column()) {
         case 0: return this->logoCache[xbe];
         case 1: return QString(xbe->m_szAsciiTitle);
-        case 2: return (quint32)xbe->m_Certificate.dwGameRegion;
+        case 2: return regionToString(xbe->m_Certificate.dwGameRegion);
         case 3: return QString::asprintf("%d.%d.%d", xbe->m_LibraryVersion->wMajorVersion, xbe->m_LibraryVersion->wMinorVersion, xbe->m_LibraryVersion->wBuildVersion);
         }
         break;
@@ -49,8 +69,11 @@ QVariant XbeTableModel::data(const QModelIndex &index, int role) const
             return this->logoCache[xbe];
         break;
     case Qt::TextAlignmentRole:
-        if (index.column() == 3)
+        switch(index.column()) {
+        case 2:
+        case 3:
             return Qt::AlignCenter;
+        }
         break;
     }
 
