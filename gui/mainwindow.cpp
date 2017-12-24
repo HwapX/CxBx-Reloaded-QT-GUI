@@ -64,7 +64,7 @@ void MainWindow::on_actionEmulationStart_triggered()
 }
 
 //Open a dialog window to load an .xbe and run on the emulator
-void MainWindow::on_actionOpen_Xbe_triggered()
+void MainWindow::on_actionOpenXbe_triggered()
 {
     //Obtain the .xbe path
     QString fileName = QFileDialog::getOpenFileName(this,tr("Open"),"",tr("*.xbe"));

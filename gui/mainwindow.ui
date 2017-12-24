@@ -67,7 +67,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen_Xbe"/>
+    <addaction name="actionOpenXbe"/>
     <addaction name="actionClose_Xbe"/>
     <addaction name="separator"/>
     <addaction name="actionSave_Xbe"/>
@@ -118,6 +118,12 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
    <property name="iconSize">
     <size>
      <width>48</width>
@@ -136,11 +142,17 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionOpenXbe"/>
+   <addaction name="separator"/>
    <addaction name="actionEmulationStart"/>
    <addaction name="actionEmulationStop"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionOpen_Xbe">
+  <action name="actionOpenXbe">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/open.png</normaloff>:/images/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open Xbe...</string>
    </property>

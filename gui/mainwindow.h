@@ -28,7 +28,7 @@ private slots:
 
     void on_actionEmulationStart_triggered();
 
-    void on_actionOpen_Xbe_triggered();
+    void on_actionOpenXbe_triggered();
 
     void on_actionAbout_triggered();
 
